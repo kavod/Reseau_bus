@@ -1,0 +1,138 @@
+La structure de données
+
+1) Notre choix
+
+        Pour realiser le projet nous avons choisi de mettre en place la structure de données suivante :
+                        - deux tableaux :
+                                *un tableau d'entiers contenant la liste des numeros de ligne
+                                *un tableau de chaines de caracteres contenant tous les noms des arrets, les intersections n'apparaissant qu'une seule fois.
+                        - une matrice d'entiers ligne * arret contenant le numero d'apparation dans la ligne lorsque l'arret appartient à la ligne, zero sinon.
+
+
+2) Choix de programmation
+
+        Pour la mise en place de cette structure nous avons choisi un algorithme qui optimise l'espace utilisé au détrimant du temps d'éxecution.
+En effet, cette optimisation nécessite plusieurs allocations dynamiques pour lesquelles on doit parcourir deux fois le fichier alors qu'une seule suffit avec une allocation statique c'est à dire en fixabt la taille des differents composants de la structure..
+Cependant l'allocation dynamique nous a semblé être une solution plus efficace pour que le programme s'adapte le mieux possible aux différents réseaux de bus. Ce qui n'est pas le cas avec une allocation statique puisque en fonction de l'importance du réseau soit on perd de la place soit le programme n'est pas utilisable.    
+
+
+3) L'algorithme
+
+        Variable :  nb_ligne : Nombre de ligne
+                        nb_arret_total :Nombre d'arret total, les intersections étant compter plusieurs fois
+                        nb_arret : Nombre d'arret initialisé  à zéro, les intersections étant compter uns seule fois
+                        nb_arret_ligne : Nombre d'arret par ligne
+                        ligne : Tableau d'entiers des numéros de ligne
+                        arret : Tableau de chaines de caractères des noms des arrets, les intersections n'étant présente qu'une seule fois
+                        mat : Matrice d'entiers lignes * arrets contenant le numero d'apparation dans la ligne lorsque l'arret appartient à la ligne
+
+
+        Début
+                // Ouverture et assignation du fichier
+                Test de l'existence du fichier
+                Test des droits d'access
+                Ouverture du fichier
+                Test de la fin de fichier
+
+                // Récupération des nombre de lignes et du nombre d'arrets total
+                Lecture du fichier : recuperation du nombre de ligne (= nb_ligne)
+                Pour toutes les lignes
+                        Lecture fichier
+                        Lecture fichier : recuperation du nombre d'arret par ligne (= nb_arret_ligne)
+                        Nombre d'arrets total (=nb_arret_total) : incremention du nombre d'arret de la ligne
+                        Pour tous les arrets de la ligne
+                                Lecture fichier
+                        Fin Pour
+                Fin Pour
+
+                // Allocations dynamiques
+                Tableau des numeros de lignes (=ligne) : allocation de nb_ligne" entiers
+                Tableau de noms des arrets (=arret): allocation de nb_arret_total chaines de caracteres
+                Matrice ligne*arret (=mat) : allocation de nb_ligne * nb_arret_total entiers
+
+                // Initialisation des tableaux et de la matrice
+                Pour toutes les lignes et les colonnes
+                        Mat = 0
+                Pour toutes les lignes
+                        Ligne = 0
+                Pour tous les arrets
+                        Arret = NULL
+
+                // Creation des tableaux et de la matrice
+                Lecture fichier : recuperation du nombre de lignes
+                Pour compteur1 de 0 à nb_ligne-1
+                        Lecture fichier : recuperation du numero de la ligne
+                        Stockage du numero de ligne dans le tableau : ligne[compteur] = numero de la ligne
+                        Lecture fichier : recuperation du nombre d'arret de la ligne
+                        Pour compteur2 de 0 à nb_arret_ligne-1
+                                Lecture fichier : recuperation du nom de l'arret
+                                Test de l'existence de l'arret dans le tableau arret
+                                Si l'arret n'est pas present
+                                        Stockage du nom de l'arret : arret[nb_arret]=nom de l'arret
+                                        Remplissage de la matrice : mat[compteur1][nb_arret]=compteur2+1
+                                Sinon Remplissage de la matrice : mat[compteur1][indice de l'arret dans le tableau]=compteur2+1
+                                Fin Si
+                        Fin Pour
+                Fin Pour
+
+                // Fermeture du ficier
+
+        Fin
+
+3) Limites de cette structure de donnees et solutions pour y remédier
+
+	Comme nous l'avons decris dans le 2) nous avons choisi de rendre la structure le plus dynamique possible afin d'optimiser l'espace utilisé. 
+Dans cette optique, cette structure a un principale défaut puisqu'on alloue, pour la matrice et le tableau des arrets autant de place que le nombre d'arret total (les intersections étant comptées plusieurs fois);l'allocation compte donc autant de cases en trop que d'intersections mais cette erreur reste quand meme faible par rapport aux nombre d'arret quelque soit l'importance du reseau.Pour résoudre ce probleme et optimiser encore la structure il suffirait de rajouter, apres le nombre de ligne, le nombre d'arret (en ne comptant qu'une fois les intersections), Ceci, en plus de permettre une allocation plus dynamique permettrait de ne parcourir plus qu'une seule fois diminuant le temps d'execution.   
+Une autre limite de ce programme provient de la taille du buffer dans lequel on stocke les lectures fichiers. En effet, ayant choisi de faire des lectures lignes par lignes c'est dire jusqu'au caractere retour charriot, on a fixer une taille maximale relativement importante pour pouvoir stocker les noms des arrets dans le buffer. Cependant si le nom de l'arret depasse cette taille, toute la ligne n'est pas lu, ce qui provoque un décalage et génere une erreur de structure de fichier alors que ce n'est pas le cas. C'est pourquoi cette valeur a ete fixe de maniere à pouvoir stocker les noms d'arret les plus longs plus d'eventuels espaces de debuts ou de fins. Mais pour parer à toutes eventualité on pourrait attribuer à cette taille maximum une valeurs tres importante (de l'ordre de la centaine), n'étant ajouté dans le tableau arret que la taille effective du nom de l'arret (sans les espaces de debuts et de fins) et non la taille du buffer. Ce qui, de plus ne modifie en rien l'espace occupé par la structure de données.       
+	
+4) Exemple
+
+	4.1) Le Fichier
+	
+		4
+		12
+		4
+		Landreau
+		Moutonnerie
+		Manufacture
+		Gare SNCF
+		65
+		3
+		Commerce 
+		Moutonnerie
+		Chantier
+		22
+		5
+		Mediatheque
+		Halaveque
+		Commerce
+		Manufacture
+		Haluchere
+		3
+		3
+		Landreau
+		Haluchere
+		Beaujoire
+		
+		
+	4.2) La structure de données
+
+		arret\ligne	12 65 22  3
+	
+		Landreau         1  0  0  1
+		Moutonnerie      2  2  0  0
+		Manufacture      3  0  4  0
+		Gare SNCF        4  0  0  0
+		Commerce         0  1  3  0
+		Chantier         0  3  0  0
+		Mediatheque      0  0  1  0
+		Halaveque        0  0  2  0
+		Haluchere        0  0  5  2
+		Beaujoire        0  0  0  3
+
+
+5) La gestion des erreurs
+
+	
+	En ce qui concerne la mise en place de la structure de données, les seules erreurs pouvant intervenir proviennent de la manipulation du fichier. Ainsi les deux opérations pouvant générées une erreur sont l'ouverture et la lecture du fichier. Pour que le programme ne s'arrete pas brutalement, on effectue un certain nombre de tests assurant le bon fonctionnement du programme quoi qu'il arrive. On teste donc l'existence et les droits du fichier à ouvrir afin de verifier que son ouverture est possible et autorisé par le systeme. Egalement on teste le contenu du fichier en verifiant qu'il est bien construit suivant la structure définie. Pour cela, on teste tout d'abord les lectures fichier pour savoir si son type correspond bien au type attendu, par exemple on teste si la lecture nous retourne un entier pour pour le nombre de lignes, le numeros de ligne et le nombre d'arret par ligne. Ensuite on verifie si la structure du fichier est complete en testant la fin de fichier avant chaque lecture. 
+Cette série de tests nous permet donc de preciser à l'utilisateur le type de l'erreur survenue lors de l'execution du programme.      

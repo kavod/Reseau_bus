@@ -1,0 +1,31 @@
+cd ..
+cd Recherche
+gcc -c recherche.c
+cp *.o ../Compil
+rm *~
+rm *.o
+
+echo Recherche OK
+
+cd ../Structure
+gcc -c structure.c
+cp *.o ../Compil
+rm *~
+rm *.o
+
+echo Structure OK
+
+cd ../IHM
+gcc -c Interf.c
+gcc -c Verif.c
+cp *.o ../Compil
+rm *~
+rm *.o
+
+cd ../Compil
+
+echo Interface OK
+
+gcc -o main main.c recherche.o Verif.o Interf.o structure.o
+echo Main OK!!
+rm *~
